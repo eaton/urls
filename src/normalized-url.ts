@@ -29,7 +29,7 @@ export interface NormalizerOptions extends Record<string, unknown> {
   /**
    * Force the hostname (or the entire URL) to lowercase.
    */
-  forceLowercase?: 'hostname' | 'pathname' | 'hostnameAndPath' | boolean;
+  forceLowercase?: 'pathname' | boolean;
 
   /**
    * Remove the URL anchor/hashtag/fragment if it exists.
@@ -78,7 +78,7 @@ export interface NormalizerOptions extends Record<string, unknown> {
    */
   replace?: {
     pattern: string | RegExp,
-    replacement: string
+    replacement: string,
     multi?: boolean,
   }
 }
@@ -88,7 +88,7 @@ export function normalize(input: string | URL, options?: NormalizerOptions) {
 }
 
 export function safeNormalize(input: string | URL, options?: NormalizerOptions): { success: false } | { success: true, url: NormalizedUrl } {
-  if (canParse(input)) {
+  if (canParse(input.toString())) {
     return { success: true, url: new NormalizedUrl(input, options) };
   } else {
     return { success: false };
@@ -96,82 +96,80 @@ export function safeNormalize(input: string | URL, options?: NormalizerOptions):
 }
 
 export class NormalizedUrl extends ParsedUrl {
-  static defaultNormalizer: Normalizer = (url: NormalizedUrl, options?: NormalizerOptions) => {
-    if (options?.forceProtocol) {
-      url.protocol = options.forceProtocol;
-    }
-  
-    if (options?.forceLowercase) {
-      if (options.forceLowercase === 'hostname') {
-        url.hostname = url.hostname.toLocaleLowerCase();
-      } else if (options.forceLowercase === 'hostnameAndPath') {
-        url.hostname = url.hostname.toLocaleLowerCase();
-        url.pathname = url.pathname.toLocaleLowerCase();
-      } else if (options.forceLowercase === true) {
-        url.href = url.href.toLocaleLowerCase();
+  static get defaultNormalizer(): Normalizer {
+    return (url: NormalizedUrl, options?: NormalizerOptions) => {
+      if (options?.forceProtocol) {
+        url.protocol = options.forceProtocol;
       }
-    }
-  
-    if (options?.discardAuth) {
-      url.username = '';
-      url.password = '';
-    }
-  
-    if (options?.discardHash) {
-      if (options.discardHash === true || isMatch(url.hash, options.discardHash)) {
-        url.hash = '';
+    
+      if (options?.forceLowercase) {
+        if (options.forceLowercase === 'pathname') {
+          url.pathname = url.pathname.toLocaleLowerCase();
+        } else if (options.forceLowercase === true) {
+          url.href = url.href.toLocaleLowerCase();
+        }
       }
-    }
-  
-    if (options?.discardIndex) {
-      if (options.discardIndex === true || isMatch(url.pathname, options.discardIndex)) {
-        const trailing = url.pathname.endsWith('/');
-        url.pathname = url.pathname.split('/').slice(0, -1).join('/') + (trailing ? '/' : '');
+    
+      if (options?.discardAuth) {
+        url.username = '';
+        url.password = '';
       }
-    }
-  
-    if (options?.discardPort) {
-      if (options.discardPort === true || isMatch(url.port.toString(), options.discardPort)) {
-        url.port = '';
+    
+      if (options?.discardHash) {
+        if (options.discardHash === true || isMatch(url.hash, options.discardHash)) {
+          url.hash = '';
+        }
       }
-    }
-  
-    if (options?.discardSearchParams) {
-      if (options.discardSearchParams === true) {
-        url.search = '';
-      } else {
-        const keys = [...url.searchParams.keys()];
-        for (const key of keys) {
-          if (isMatch(key, options.discardSearchParams)) {
-            url.searchParams.delete(key);
-            continue;
-          }
-        }  
+    
+      if (options?.discardIndex) {
+        if (options.discardIndex === true || isMatch(url.pathname, options.discardIndex)) {
+          const trailing = url.pathname.endsWith('/');
+          url.pathname = url.pathname.split('/').slice(0, -1).join('/') + (trailing ? '/' : '');
+        }
       }
-    }
-  
-    if (options?.discardTrailingSlash) {
-      if (url.pathname.endsWith('/')) {
-        url.pathname = url.pathname.slice(0, -1);
+    
+      if (options?.discardPort) {
+        if (options.discardPort === true || isMatch(url.port.toString(), options.discardPort)) {
+          url.port = '';
+        }
       }
-    };
-  
-    if (options?.sortSearchParams) url.searchParams.sort();
-  
-    if (options?.replace) {
-      if (options.replace.multi) {
-        url.href = url.href.replaceAll(options.replace.pattern, options.replace.replacement);
-      } else {
-        url.href = url.href.replace(options.replace.pattern, options.replace.replacement);
+    
+      if (options?.discardSearchParams) {
+        if (options.discardSearchParams === true) {
+          url.search = '';
+        } else {
+          const keys = [...url.searchParams.keys()];
+          for (const key of keys) {
+            if (isMatch(key, options.discardSearchParams)) {
+              url.searchParams.delete(key);
+              continue;
+            }
+          }  
+        }
       }
+    
+      if (options?.discardTrailingSlash) {
+        if (url.pathname.endsWith('/')) {
+          url.pathname = url.pathname.slice(0, -1);
+        }
+      };
+    
+      if (options?.sortSearchParams) url.searchParams.sort();
+    
+      if (options?.replace) {
+        if (options.replace.multi) {
+          url.href = url.href.replaceAll(options.replace.pattern, options.replace.replacement);
+        } else {
+          url.href = url.href.replace(options.replace.pattern, options.replace.replacement);
+        }
+      }
+    
+      return url;
     }
-  
-    return url;
   }
 
   static defaultOptions: NormalizerOptions = {
     forceProtocol: 'https:',
-    forceLowercase: 'hostname',
     discardAuth: true,
     discardHash: true,
     discardIndex: '**/{index,default}.*',
@@ -180,6 +178,8 @@ export class NormalizedUrl extends ParsedUrl {
     discardTrailingSlash: false,
   }
   
+  static normalizer = NormalizedUrl.defaultNormalizer;
+
   readonly raw: string | undefined;
 
   /**
@@ -199,7 +199,7 @@ export class NormalizedUrl extends ParsedUrl {
       opt = { ...NormalizedUrl.defaultOptions, ...options };
     }
 
-    const normalizer = opt.normalizer ?? NormalizedUrl.defaultNormalizer;
+    const normalizer = opt.normalizer ?? NormalizedUrl.normalizer;
 
     if (typeof input === 'string' || input instanceof URL) {
       super(input.toString(), opt.base);

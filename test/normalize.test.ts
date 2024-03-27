@@ -1,11 +1,38 @@
 import test from 'ava';
-import { canParse, normalize } from '../src/index.js';
+import { normalize, NormalizedUrl, ParsedUrl, safeNormalize } from '../src/index.js';
 
-test('normalization', t => {
-	const fullUrl = 'https://user:pass@SOME.SUBDOMAIN.example.co.uk:80/subdirectory/index.html?param=1&utm_campaign=google#top';
+test('normalization helpers', t => {
+	const href = 'http://some.subdomain.example.co.uk/index.html#top';
 
-	t.is(canParse(fullUrl), true);
+	const safeFail = safeNormalize("WON'T PARSE");
+	const safeSuccess = safeNormalize(href);
+	t.is(safeFail.success, false);
+	t.is(safeSuccess.success, true);
+	if (safeSuccess.success) {
+		t.is(safeSuccess.url.href, 'https://some.subdomain.example.co.uk/');
+	}
+});
 
-	const normalized = normalize(fullUrl);
-  t.is(normalized.fragment, '');
+test('no-op normalizer', t => {
+	const href = 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/index.html?param=1&utm_campaign=google#top';
+	
+	// Baseline URL parsing
+	t.is(new URL(href).href, href);
+	t.is(new ParsedUrl(href).href, href);
+
+	// Running a messy URL with the default normalizer; the results shouldn't match.
+	t.not(normalize(href).href, href);
+
+	// Running a messy URL while passing in a no-op normalizer; the first result should match, the second shouldn't.
+	t.is(normalize(href, { normalizer: url => url }).href, href);
+	t.not(normalize(href).href, href);
+
+	// Changing the global normalizer to a no-op function, normalizing a URL, then changing it back and normalizing
+	// it a second time. First should match, second shouldn't.
+	NormalizedUrl.normalizer = url => url;
+	t.is(normalize(href).href, href);
+
+	
+	NormalizedUrl.normalizer = NormalizedUrl.defaultNormalizer;
+	t.not(normalize(href).href, href);
 });
