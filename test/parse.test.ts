@@ -1,14 +1,22 @@
 import test from 'ava';
-import { parse, canParse } from '../src/index.js';
+import { parse, canParse, safeParse } from '../src/index.js';
 
-test('canParse and parse', t => {
+test('parsing helpers', t => {
 	const href = 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top';
 
 	t.is(canParse(href), true);
 	t.is(canParse("WON'T PARSE"), false);
 
-	const parsed = parse(href);
-	t.deepEqual(parsed.properties, {
+	const safeFail = safeParse("WON'T PARSE");
+	const safeSuccess = safeParse(href);
+	t.is(safeFail.success, false);
+	t.is(safeSuccess.success, true);
+	if (safeSuccess.success) {
+		t.is(safeSuccess.url.href, href);
+	}
+
+	t.throws(() => parse("WON'T PARSE"));
+	t.deepEqual(parse(href).properties, {
 		href,
 		protocol: 'https:',
 		username: 'user',
@@ -35,7 +43,7 @@ test('canParse and parse', t => {
 	})
 });
 
-test('domain element modification', t => {
+test('domain modification', t => {
 	const url = parse('https://some.subdomain.example.co.uk');
 
 	url.domainWithoutSuffix = 'test';
