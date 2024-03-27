@@ -1,5 +1,6 @@
-import { getDomain, getPublicSuffix, getSubdomain } from 'tldts';
+import { getDomain, getDomainWithoutSuffix, getPublicSuffix, getSubdomain } from 'tldts';
 import path from 'path';
+import { isIP } from 'net';
 
 export function parse(input: string, base?: string | URL) {
   return new ParsedUrl(input, base);
@@ -11,15 +12,15 @@ export class ParsedUrl extends URL {
   }
 
   set domain(value: string | undefined) {
-    this.hostname = [this.subdomain, value].join('.');
+    this.hostname = [this.subdomain, value].filter(v => v && v.trim().length > 0).join('.');
   }
 
   get domainWithoutSuffix(): string {
-    return parse(this.href).domainWithoutSuffix ?? '';
+    return getDomainWithoutSuffix(this.href) ?? '';
   }
 
   set domainWithoutSuffix(value: string) {
-    this.hostname = [this.subdomain, value, this.publicSuffix].join('.');
+    this.hostname = [this.subdomain, value, this.publicSuffix].filter(v => v && v.trim().length > 0).join('.');
   }
 
   get subdomain(): string {
@@ -35,7 +36,7 @@ export class ParsedUrl extends URL {
   }
 
   set publicSuffix(value: string) {
-    this.hostname = [this.subdomain, this.domainWithoutSuffix, value].join('.');
+    this.hostname = [this.subdomain, this.domainWithoutSuffix, value].filter(v => v && v.trim().length > 0).join('.');
   }
 
   get fragment(): string {
@@ -57,6 +58,10 @@ export class ParsedUrl extends URL {
 
   get extension(): string {
     return path.parse(this.pathname).ext;
+  }
+
+  get isIP(): boolean {
+    return !!isIP(this.hostname);
   }
 
   get properties() {

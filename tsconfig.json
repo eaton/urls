@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "NodeNext",
+    "module": "ESNext",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "target": "ESNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Bundler",
     "skipLibCheck": true,
   },
   "include": ["./src/**/*"],

@@ -2,6 +2,7 @@
   "name": "@eatonfyi/urls",
   "version": "1.0.0",
   "description": "Extended parsing, normalization, and resolution of URLs.",
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
@@ -16,8 +17,16 @@
     }
   },
   "scripts": {
-    "build": "shx rm -rf dist && pkgroll",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pkgroll",
+    "test": "ava"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--import=tsimp"
+    ]
   },
   "keywords": [
     "asin",
@@ -27,10 +36,12 @@
   "author": "eaton",
   "license": "MIT",
   "devDependencies": {
+    "@ava/typescript": "^4.1.0",
     "@types/node": "^20.11.30",
+    "ava": "^6.1.2",
     "pkgroll": "^2.0.2",
     "shx": "^0.3.4",
-    "tsx": "^4.7.1",
+    "tsimp": "^2.0.11",
     "typescript": "^5.4.3"
   },
   "dependencies": {
