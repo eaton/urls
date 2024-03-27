@@ -36,15 +36,15 @@
   "author": "eaton",
   "license": "MIT",
   "devDependencies": {
-    "@ava/typescript": "^4.1.0",
+    "@types/micromatch": "^4.0.6",
     "@types/node": "^20.11.30",
     "ava": "^6.1.2",
     "pkgroll": "^2.0.2",
-    "shx": "^0.3.4",
     "tsimp": "^2.0.11",
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "micromatch": "^4.0.5",
     "tldts": "^6.1.14",
     "urlpattern-polyfill": "^10.0.0"
   }

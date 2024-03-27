@@ -1,14 +1,23 @@
-import { getDomain, getDomainWithoutSuffix, getPublicSuffix, getSubdomain } from 'tldts';
+import * as tld from 'tldts';
 import path from 'path';
-import { isIP } from 'net';
+
+export const canParse = URL.canParse;
 
 export function parse(input: string, base?: string | URL) {
   return new ParsedUrl(input, base);
 }
 
+export function safeParse(input: string, base?: string | URL): { success: false } | { success: true, url: ParsedUrl } {
+  if (canParse(input)) {
+    return { success: true, url: new ParsedUrl(input, base) };
+  } else {
+    return { success: false };
+  }
+}
+
 export class ParsedUrl extends URL {
   get domain(): string {
-    return getDomain(this.hostname) ?? '';
+    return tld.getDomain(this.hostname) ?? '';
   }
 
   set domain(value: string | undefined) {
@@ -16,7 +25,7 @@ export class ParsedUrl extends URL {
   }
 
   get domainWithoutSuffix(): string {
-    return getDomainWithoutSuffix(this.href) ?? '';
+    return tld.getDomainWithoutSuffix(this.href) ?? '';
   }
 
   set domainWithoutSuffix(value: string) {
@@ -24,7 +33,7 @@ export class ParsedUrl extends URL {
   }
 
   get subdomain(): string {
-    return getSubdomain(this.hostname) ?? '';
+    return tld.getSubdomain(this.hostname) ?? '';
   }
 
   set subdomain(value: string | undefined) {
@@ -32,7 +41,7 @@ export class ParsedUrl extends URL {
   }
 
   get publicSuffix(): string {
-    return getPublicSuffix(this.hostname) ?? '';
+    return tld.getPublicSuffix(this.hostname) ?? '';
   }
 
   set publicSuffix(value: string) {
@@ -44,7 +53,11 @@ export class ParsedUrl extends URL {
   }
 
   set fragment(value: string) {
-    this.hash = '#' + value;
+    if (value.trim().length === 0) {
+      this.hash = '';
+    } else {
+      this.hash = '#' + value;
+    }
   }
 
   get path(): string[] {
@@ -60,8 +73,16 @@ export class ParsedUrl extends URL {
     return path.parse(this.pathname).ext;
   }
 
-  get isIP(): boolean {
-    return !!isIP(this.hostname);
+  get isIp(): boolean {
+    return !!tld.parse(this.href).isIp;
+  }
+
+  get isIcann(): boolean {
+    return !!tld.parse(this.href).isIcann;
+  }
+
+  get isPrivate(): boolean {
+    return !!tld.parse(this.href).isPrivate;
   }
 
   get properties() {
@@ -91,6 +112,9 @@ export class ParsedUrl extends URL {
       searchParams: searchParameters,
       hash: this.hash,
       fragment: this.fragment,
+      isIp: this.isIp,
+      isPrivate: this.isPrivate,
+      isIcann: this.isIcann
     };
   }
 }

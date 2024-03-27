@@ -2,14 +2,14 @@ import test from 'ava';
 import { parse, canParse } from '../src/index.js';
 
 test('canParse and parse', t => {
-	const fullUrl = 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top';
+	const href = 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top';
 
-	t.is(canParse(fullUrl), true);
+	t.is(canParse(href), true);
 	t.is(canParse("WON'T PARSE"), false);
 
-	const parsed = parse(fullUrl);
+	const parsed = parse(href);
 	t.deepEqual(parsed.properties, {
-		href: 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top',
+		href,
 		protocol: 'https:',
 		username: 'user',
 		password: 'pass',
@@ -28,12 +28,15 @@ test('canParse and parse', t => {
 		search: '?param=1',
 		searchParams: { param: '1' },
 		hash: '#top',
-		fragment: 'top'
+		fragment: 'top',
+		isIcann: true,
+		isIp: false,
+		isPrivate: false,
 	})
 });
 
-test('property modification', t => {
-	const url = parse('https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top');
+test('domain element modification', t => {
+	const url = parse('https://some.subdomain.example.co.uk');
 
 	url.domainWithoutSuffix = 'test';
 	t.is(url.hostname, 'some.subdomain.test.co.uk');
