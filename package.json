@@ -1,0 +1,40 @@
+{
+  "name": "@eatonfyi/urls",
+  "version": "1.0.0",
+  "description": "Extended parsing, normalization, and resolution of URLs.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && pkgroll",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "asin",
+    "amazon",
+    "scraper"
+  ],
+  "author": "eaton",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "pkgroll": "^2.0.2",
+    "shx": "^0.3.4",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "tldts": "^6.1.14",
+    "urlpattern-polyfill": "^10.0.0"
+  }
+}
