@@ -17,7 +17,8 @@ export interface NormalizerOptions extends Record<string, unknown> {
   base?: string | URL,
 
   /**
-   * Coerce the URL's protocol; primarily useful for changing http: to https:
+   * Override the URL Normalizer with a custom function; it should accept, and return, an
+   * instance of NormalizedUrl.
    */
   normalizer?: Normalizer
 
@@ -34,7 +35,7 @@ export interface NormalizerOptions extends Record<string, unknown> {
   /**
    * Remove the URL anchor/hashtag/fragment if it exists.
    */
-  discardHash?: string | string[] | boolean;
+  discardHash?: string | boolean;
 
   /**
    * Remove the URL authentication fields (username and password) if they exist.
@@ -44,15 +45,19 @@ export interface NormalizerOptions extends Record<string, unknown> {
   /**
    * Remove the port number if it matches a glob pattern.
    */
-  discardPort?: string | string[] | boolean;
+  discardPort?: string | boolean;
 
   /**
    * If the pathname matches the supplied pattern, remove its final segment.
-   *
    * Useful for stripping `/index.html` and `/Default.aspx` style filenames that
    * fall back to `/` on most servers.
+   * 
+   * NOTE: This will preserve the trailing slash after the index filename is removed;
+   * when combined with the discardTrailingSlash option, you may encounter issues on
+   * servers where `example.com/dir` is treated as a filename rather than a directory
+   * index.
    */
-  discardIndex?: string | string[] | boolean;
+  discardIndex?: string | boolean;
 
   /**
    * Discard any search/querystring parameters whose names match the supplied pattern.
@@ -123,8 +128,9 @@ export class NormalizedUrl extends ParsedUrl {
     
       if (options?.discardIndex) {
         if (options.discardIndex === true || isMatch(url.pathname, options.discardIndex)) {
-          const trailing = url.pathname.endsWith('/');
-          url.pathname = url.pathname.split('/').slice(0, -1).join('/') + (trailing ? '/' : '');
+          const segments = url.path;
+          segments[segments.length-1] = '';
+          url.pathname = segments.join('/');
         }
       }
     

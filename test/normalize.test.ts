@@ -1,5 +1,5 @@
 import test from 'ava';
-import { normalize, NormalizedUrl, ParsedUrl, safeNormalize } from '../src/index.js';
+import { normalize, NormalizedUrl, ParsedUrl, safeNormalize, Normalizer } from '../src/index.js';
 
 test('normalization helpers', t => {
 	const href = 'http://some.subdomain.example.co.uk/index.html#top';
@@ -35,4 +35,16 @@ test('no-op normalizer', t => {
 	
 	NormalizedUrl.normalizer = NormalizedUrl.defaultNormalizer;
 	t.not(normalize(href).href, href);
+});
+
+test('chained normalizer', t => {
+	const href = 'https://example.com/index.html';
+	t.is(normalize(href).href, 'https://example.com/');
+
+	const normalizer: Normalizer = (url, options) => {
+		url = NormalizedUrl.defaultNormalizer(url, options);
+		url.protocol = 'ftp:';
+		return url;
+	}
+	t.is(normalize(href, { normalizer }).href, 'ftp://example.com/');
 });
