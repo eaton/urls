@@ -16,6 +16,10 @@
       "default": "./dist/index.mjs"
     }
   },
+  "files": [
+    "/dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "pkgroll",
     "clean": "shx rm -rf dist",
