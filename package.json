@@ -17,8 +17,9 @@
     }
   },
   "scripts": {
-    "build": "shx rm -rf dist && pkgroll",
-    "prepublish": "npm run build",
+    "build": "pkgroll",
+    "clean": "shx rm -rf dist",
+    "prepare": "npm run clean && npm run build",
     "test": "ava"
   },
   "ava": {
