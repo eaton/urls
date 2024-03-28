@@ -4,6 +4,7 @@
 /.tsimp
 /.idea
 /.nyc_output
+/dist
 /lib
 /package-lock.json
 /tmp
