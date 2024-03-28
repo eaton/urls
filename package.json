@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "build": "pkgroll",
+    "prepare": "pkgroll",
     "test": "ava"
   },
   "ava": {
@@ -36,7 +36,6 @@
   "author": "eaton",
   "license": "MIT",
   "devDependencies": {
-    "@types/micromatch": "^4.0.6",
     "@types/node": "^20.11.30",
     "ava": "^6.1.2",
     "pkgroll": "^2.0.2",
@@ -44,6 +43,7 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "@types/micromatch": "^4.0.6",
     "micromatch": "^4.0.5",
     "tldts": "^6.1.14",
     "urlpattern-polyfill": "^10.0.0"
