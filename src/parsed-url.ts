@@ -17,7 +17,7 @@ export function safeParse(input: string, base?: string | URL): { success: false 
 
 export class ParsedUrl extends URL {
   get domain(): string {
-    return tld.getDomain(this.hostname) ?? '';
+    return tld.getDomain(this.href) ?? '';
   }
 
   set domain(value: string | undefined) {
@@ -62,6 +62,7 @@ export class ParsedUrl extends URL {
 
   get path(): string[] {
     if (this.pathname === '/') return [];
+    if (this.pathname.indexOf('/') === -1) return [];
     return this.pathname.slice(1).split('/');
   }
 
