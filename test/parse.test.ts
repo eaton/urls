@@ -19,6 +19,7 @@ test('parsing helpers', t => {
 	t.deepEqual(parse(href).properties, {
 		href,
 		protocol: 'https:',
+		user: 'user',
 		username: 'user',
 		password: 'pass',
 		origin: 'https://some.subdomain.example.co.uk:80',
