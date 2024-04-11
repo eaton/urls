@@ -16,6 +16,27 @@ export function safeParse(input: string, base?: string | URL): { success: false 
 }
 
 export class ParsedUrl extends URL {
+
+  
+  /**
+   * A mailto: aware version of the URL class's 'username' property.
+   * For web URLs, `user` is the same as `username`, but for mailto: URLs,
+   * it contains the 'user/account' portion of the email address.
+   */
+  get user(): string {
+    return (this.protocol === 'mailto:') ? this.pathname.split('@')[0] : this.username;
+  }
+
+  set user(input: string) {
+    if (this.protocol === 'mailto:') {
+      const segments = this.pathname.split('@');
+      segments[0] = input;
+      this.pathname = segments.join('@');
+    } else {
+      this.username = input;
+    }
+  }
+
   get domain(): string {
     return tld.getDomain(this.href) ?? '';
   }
@@ -95,6 +116,7 @@ export class ParsedUrl extends URL {
     return {
       href: this.href,
       protocol: this.protocol,
+      user: this.user,
       username: this.username,
       password: this.password,
       origin: this.origin,
