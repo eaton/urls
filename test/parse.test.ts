@@ -59,3 +59,10 @@ test('domain modification', t => {
 	url.publicSuffix = 'com';
 	t.is(url.hostname, 'test.com');
 });
+
+test.failing('direct comparison', t => {
+	const u = new URL('https://example.com');
+	const pu = parse('https://example.com');
+
+	t.deepEqual(u, pu);
+})
