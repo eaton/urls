@@ -16,8 +16,6 @@ export function safeParse(input: string, base?: string | URL): { success: false 
 }
 
 export class ParsedUrl extends URL {
-
-  
   /**
    * A mailto: aware version of the URL class's 'username' property.
    * For web URLs, `user` is the same as `username`, but for mailto: URLs,

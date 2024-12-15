@@ -1,5 +1,5 @@
 import test from 'ava';
-import { parse, canParse, safeParse } from '../src/index.js';
+import { parse, canParse } from '../src/index.js';
 
 test('mail domain', t => {
 	const mail = 'mailto:bob@example.com';
