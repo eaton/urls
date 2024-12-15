@@ -1,22 +1,21 @@
 import test from 'ava';
-import { parse, canParse, safeParse } from '../src/index.js';
+import { ParsedUrl } from '../src/index.js';
 
 test('parsing helpers', t => {
 	const href = 'https://user:pass@some.subdomain.example.co.uk:80/subdirectory/file.html?param=1#top';
 
-	t.is(canParse(href), true);
-	t.is(canParse("WON'T PARSE"), false);
+	t.is(ParsedUrl.canParse(href), true);
+	t.is(ParsedUrl.canParse("WON'T PARSE"), false);
 
-	const safeFail = safeParse("WON'T PARSE");
-	const safeSuccess = safeParse(href);
-	t.is(safeFail.success, false);
-	t.is(safeSuccess.success, true);
-	if (safeSuccess.success) {
-		t.is(safeSuccess.url.href, href);
-	}
+	const safeFail = ParsedUrl.parse("WON'T PARSE");
+	const safeSuccess = ParsedUrl.parse(href);
+	t.falsy(safeFail);
+	t.truthy(safeSuccess);
+	t.is(safeSuccess?.href, href);
 
-	t.throws(() => parse("WON'T PARSE"));
-	t.deepEqual(parse(href).properties, {
+	t.throws(() => new ParsedUrl("WON'T PARSE"));
+	t.notThrows(() => ParsedUrl.parse("WON'T PARSE"));
+	t.deepEqual(ParsedUrl.parse(href)?.properties, {
 		href,
 		protocol: 'https:',
 		user: 'user',
@@ -45,7 +44,7 @@ test('parsing helpers', t => {
 });
 
 test('domain modification', t => {
-	const url = parse('https://some.subdomain.example.co.uk');
+	const url = new ParsedUrl('https://some.subdomain.example.co.uk');
 
 	url.domainWithoutSuffix = 'test';
 	t.is(url.hostname, 'some.subdomain.test.co.uk');
@@ -62,7 +61,7 @@ test('domain modification', t => {
 
 test.failing('direct comparison', t => {
 	const u = new URL('https://example.com');
-	const pu = parse('https://example.com');
+	const pu = new ParsedUrl('https://example.com');
 
 	t.deepEqual(u, pu);
 })

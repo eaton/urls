@@ -1,7 +1,6 @@
 import pkg from 'micromatch'
 const { isMatch } = pkg;
-
-import { ParsedUrl, canParse } from './parsed-url.js';
+import { ParsedUrl } from './parsed-url.js';
 
 export type Normalizer = (url: NormalizedUrl, options?: NormalizerOptions) => NormalizedUrl;
 
@@ -88,19 +87,24 @@ export interface NormalizerOptions extends Record<string, unknown> {
   }
 }
 
-export function normalize(input: string | URL, options?: NormalizerOptions) {
-  return new NormalizedUrl(input, options);
-}
-
-export function safeNormalize(input: string | URL, options?: NormalizerOptions): { success: false } | { success: true, url: NormalizedUrl } {
-  if (canParse(input.toString())) {
-    return { success: true, url: new NormalizedUrl(input, options) };
-  } else {
-    return { success: false };
-  }
-}
-
 export class NormalizedUrl extends ParsedUrl {
+  /**
+   * A non-throwing version of the NormalizedUrl constructor; if the input
+   * can't be parsed as a URL, it returns `undefined`.
+   * 
+   * Note: This differs slightly from URL.parse(), which returns `null`
+   * when a URL is unparseable.
+   */
+  static normalize(input: string | URL, options?: string | NormalizerOptions) {
+    const opt = (typeof options === 'string') ? { base: options } : options;
+    try {
+      return new NormalizedUrl(input, opt);
+    } catch {
+      return undefined;
+    }
+  }
+  
+
   static get defaultNormalizer(): Normalizer {
     return (url: NormalizedUrl, options?: NormalizerOptions) => {
       if (options?.forceProtocol) {

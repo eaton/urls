@@ -35,11 +35,11 @@
     ]
   },
   "keywords": [
-    "asin",
-    "amazon",
-    "scraper"
+    "url",
+    "normalize",
+    "tld"
   ],
-  "author": "eaton",
+  "author": "Jeff Eaton <jeff@eaton.fyi> (https://eaton.fyi)",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.30",

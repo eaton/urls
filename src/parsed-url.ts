@@ -1,21 +1,22 @@
 import * as tld from 'tldts';
 import path from 'path';
 
-export const canParse = URL.canParse;
-
-export function parse(input: string, base?: string | URL) {
-  return new ParsedUrl(input, base);
-}
-
-export function safeParse(input: string, base?: string | URL): { success: false } | { success: true, url: ParsedUrl } {
-  if (canParse(input)) {
-    return { success: true, url: new ParsedUrl(input, base) };
-  } else {
-    return { success: false };
-  }
-}
-
 export class ParsedUrl extends URL {
+  /**
+   * A non-throwing version of the ParsedURL constructor; if the input
+   * can't be parsed as a URL, it returns `undefined`.
+   * 
+   * Note: This differs slightly from URL.parse(), which returns `null`
+   * when a URL is unparseable.
+   */
+  static parse(input: string, base?: string | URL) {
+    try {
+      return new ParsedUrl(input, base);
+    } catch {
+      return undefined;
+    }
+  }
+  
   /**
    * A mailto: aware version of the URL class's 'username' property.
    * For web URLs, `user` is the same as `username`, but for mailto: URLs,
