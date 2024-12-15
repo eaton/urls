@@ -1,6 +1,6 @@
 {
   "name": "@eatonfyi/urls",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Extended parsing and normalization of URLs, with support for TLD as a distinct property.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -41,6 +41,10 @@
   ],
   "author": "Jeff Eaton <jeff@eaton.fyi> (https://eaton.fyi)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eaton/urls.git"
+  },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "ava": "^6.2.0",
