@@ -1,6 +1,6 @@
 {
   "name": "@eatonfyi/urls",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Extended parsing and normalization of URLs, with support for TLD as a distinct property.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -22,8 +22,7 @@
   ],
   "scripts": {
     "build": "pkgroll",
-    "package": "npm run clean;pkgroll --minify --clean-dist",
-    "clean": "shx rm -rf .tsimp;shx rm -rf dist;",
+    "package": "pkgroll --minify --clean-dist",
     "test": "ava"
   },
   "ava": {
@@ -49,7 +48,6 @@
     "@types/node": "^20.11.30",
     "ava": "^6.2.0",
     "pkgroll": "^2.5.1",
-    "shx": "^0.3.4",
     "tsimp": "^2.0.12",
     "typescript": "^5.7.2"
   },
