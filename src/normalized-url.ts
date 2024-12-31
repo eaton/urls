@@ -90,17 +90,14 @@ export interface NormalizerOptions extends Record<string, unknown> {
 export class NormalizedUrl extends ParsedUrl {
   /**
    * A non-throwing version of the NormalizedUrl constructor; if the input
-   * can't be parsed as a URL, it returns `undefined`.
-   * 
-   * Note: This differs slightly from URL.parse(), which returns `null`
-   * when a URL is unparseable.
+   * can't be parsed as a URL, it returns `null`.
    */
   static normalize(input: string | URL, options?: string | NormalizerOptions) {
     const opt = (typeof options === 'string') ? { base: options } : options;
     try {
       return new NormalizedUrl(input, opt);
     } catch {
-      return undefined;
+      return null;
     }
   }
   

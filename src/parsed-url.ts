@@ -4,16 +4,13 @@ import path from 'path';
 export class ParsedUrl extends URL {
   /**
    * A non-throwing version of the ParsedURL constructor; if the input
-   * can't be parsed as a URL, it returns `undefined`.
-   * 
-   * Note: This differs slightly from URL.parse(), which returns `null`
-   * when a URL is unparseable.
+   * can't be parsed as a URL, it returns `null`.
    */
   static parse(input: string, base?: string | URL) {
     try {
       return new ParsedUrl(input, base);
     } catch {
-      return undefined;
+      return null;
     }
   }
   
