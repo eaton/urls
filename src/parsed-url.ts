@@ -196,6 +196,7 @@ export class ParsedUrl extends URL {
       extension: this.extension,
       search: this.search,
       searchParams: searchParameters,
+      utmParams: this.utmParams,
       hash: this.hash,
       fragment: this.fragment,
       isIp: this.isIp,

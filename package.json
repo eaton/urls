@@ -23,6 +23,7 @@
   "scripts": {
     "build": "pkgroll",
     "package": "pkgroll --minify --clean-dist",
+    "examples": "node --import=tsimp ./src/examples.ts",
     "test": "ava"
   },
   "ava": {
