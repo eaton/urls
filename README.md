@@ -43,6 +43,7 @@ console.log(url.properties);
 //   extension: '.html',
 //   search: '',
 //   searchParams: {},
+//   utmParams: {},
 //   hash: '#anchor',
 //   fragment: 'anchor',
 //   isIp: false,
