@@ -58,8 +58,17 @@ console.log(url.properties);
 import { NormalizedUrl } from '@eatonfyi/urls';
 
 const normalized = new NormalizedUrl(
-  'http://WW2.EXAMPLE.co.UK/index.html?b=1&a=2&utm_src=ads'
+  'http://WW2.EXAMPLE.co.UK/index.html?b=1&a=2&utm_src=ads#content'
 );
-
 console.log(normalized.href); // https://www.example.co.uk/?b=1&a=2
+
+const custom = new NormalizedUrl(
+  'http://WW2.EXAMPLE.co.UK/index.html?b=1&a=2&utm_src=ads#content',
+  {
+    discardHash: false,
+    discardIndex: false,
+    discardSearchParams: true
+  }
+);
+console.log(normalized.href); // https://www.example.co.uk/index.html#content
 ```
