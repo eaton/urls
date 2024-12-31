@@ -36,6 +36,9 @@ export class ParsedUrl extends URL {
     }
   }
 
+  /**
+   * The root of a URL's hostname, including its TLD; e.g. `example.com` for `www.example.com`.
+   */
   get domain(): string {
     return tld.getDomain(this.href) ?? '';
   }
@@ -44,6 +47,9 @@ export class ParsedUrl extends URL {
     this.hostname = [this.subdomain, value].filter(v => v && v.trim().length > 0).join('.');
   }
 
+  /**
+   * The root of a URL's hostname, excluding its TLD; e.g. `example` for `www.example.com`.
+   */
   get domainWithoutSuffix(): string {
     return tld.getDomainWithoutSuffix(this.href) ?? '';
   }
@@ -52,6 +58,9 @@ export class ParsedUrl extends URL {
     this.hostname = [this.subdomain, value, this.publicSuffix].filter(v => v && v.trim().length > 0).join('.');
   }
 
+  /**
+   * The non-root portion of the URL's hostname; e.g. `www` for `www.example.com`.
+   */
   get subdomain(): string {
     return tld.getSubdomain(this.hostname) ?? '';
   }
@@ -68,6 +77,9 @@ export class ParsedUrl extends URL {
     this.hostname = [this.subdomain, this.domainWithoutSuffix, value].filter(v => v && v.trim().length > 0).join('.');
   }
 
+  /**
+   * A version of the URL's `hash` property that excludes the hashtag.
+   */
   get fragment(): string {
     return this.hash.slice(1);
   }
@@ -80,28 +92,53 @@ export class ParsedUrl extends URL {
     }
   }
 
+  /**
+   * A read-only array of segments that make up the URL's `pathname`.
+   * 
+   * This can be used for quickly checking known segments of a URL, e.g.:
+   * `if (url.path[4] === slug)`.
+   */
   get path(): string[] {
     if (this.pathname === '/') return [];
     if (this.pathname.indexOf('/') === -1) return [];
     return this.pathname.slice(1).split('/');
   }
 
+  /**
+   * The final segment of the URL's pathname, if it exists.
+   * 
+   * For example, `http://foo.com/dir/index.html`'s file is `index.html`.
+   */
   get file(): string {
     return path.parse(this.pathname).base;
   }
 
+  /**
+   * The filetype extension of the URL's filename, if it exists.
+   * 
+   * For example, `http://foo.com/dir/index.html`'s file is `.html`.
+   */
   get extension(): string {
     return path.parse(this.pathname).ext;
   }
 
+  /**
+   * Boolean indicating whether or not the URL is a valid IP address.
+   */
   get isIp(): boolean {
     return !!tld.parse(this.href).isIp;
   }
 
+  /**
+   * Boolean indicating whether or not the URL is a valid IP address.
+   */
   get isIcann(): boolean {
     return !!tld.parse(this.href).isIcann;
   }
 
+  /**
+   * Boolean indicating whether or not the URL is a valid IP address.
+   */
   get isPrivate(): boolean {
     return !!tld.parse(this.href).isPrivate;
   }
