@@ -73,7 +73,7 @@ export interface NormalizerOptions extends Record<string, unknown> {
    * Alphabetize any search/querystring parameters, so links that supply params in different
    * orders are not incorrectly flagged as different URLs.
    */
-  sortSearchParams?: 'asc' | 'desc' | boolean;
+  sortSearchParams?: boolean;
 
   /**
    * Brute force search and replace in the URL's href string. By default, only the first match
@@ -104,53 +104,54 @@ export class NormalizedUrl extends ParsedUrl {
     }
   }
   
-
   static get defaultNormalizer(): Normalizer {
-    return (url: NormalizedUrl, options?: NormalizerOptions) => {
-      if (options?.forceProtocol) {
-        url.protocol = options.forceProtocol;
+    return (url: NormalizedUrl, options: Partial<NormalizerOptions> = {}) => {
+      const opt = { ...NormalizedUrl.defaultOptions, ...options }
+
+      if (opt?.forceProtocol) {
+        url.protocol = opt.forceProtocol;
       }
     
-      if (options?.forceLowercase) {
-        if (options.forceLowercase === 'pathname') {
+      if (opt?.forceLowercase) {
+        if (opt.forceLowercase === 'pathname') {
           url.pathname = url.pathname.toLocaleLowerCase();
-        } else if (options.forceLowercase === true) {
+        } else if (opt.forceLowercase === true) {
           url.href = url.href.toLocaleLowerCase();
         }
       }
     
-      if (options?.discardAuth) {
+      if (opt?.discardAuth) {
         url.username = '';
         url.password = '';
       }
     
-      if (options?.discardHash) {
-        if (options.discardHash === true || isMatch(url.hash, options.discardHash)) {
+      if (opt?.discardHash) {
+        if (opt.discardHash === true || isMatch(url.hash, opt.discardHash)) {
           url.hash = '';
         }
       }
     
-      if (options?.discardIndex) {
-        if (options.discardIndex === true || isMatch(url.pathname, options.discardIndex)) {
+      if (opt?.discardIndex) {
+        if (opt.discardIndex === true || isMatch(url.pathname, opt.discardIndex)) {
           const segments = url.path;
           segments[segments.length-1] = '';
           url.pathname = segments.join('/');
         }
       }
     
-      if (options?.discardPort) {
-        if (options.discardPort === true || isMatch(url.port.toString(), options.discardPort)) {
+      if (opt?.discardPort) {
+        if (opt.discardPort === true || isMatch(url.port.toString(), opt.discardPort)) {
           url.port = '';
         }
       }
     
-      if (options?.discardSearchParams) {
-        if (options.discardSearchParams === true) {
+      if (opt?.discardSearchParams) {
+        if (opt.discardSearchParams === true) {
           url.search = '';
         } else {
           const keys = [...url.searchParams.keys()];
           for (const key of keys) {
-            if (isMatch(key, options.discardSearchParams)) {
+            if (isMatch(key, opt.discardSearchParams)) {
               url.searchParams.delete(key);
               continue;
             }
@@ -158,19 +159,19 @@ export class NormalizedUrl extends ParsedUrl {
         }
       }
     
-      if (options?.discardTrailingSlash) {
+      if (opt?.discardTrailingSlash) {
         if (url.pathname.endsWith('/')) {
           url.pathname = url.pathname.slice(0, -1);
         }
       };
     
-      if (options?.sortSearchParams) url.searchParams.sort();
+      if (opt?.sortSearchParams) url.searchParams.sort();
     
-      if (options?.replace) {
-        if (options.replace.multi) {
-          url.href = url.href.replaceAll(options.replace.pattern, options.replace.replacement);
+      if (opt?.replace) {
+        if (opt.replace.multi) {
+          url.href = url.href.replaceAll(opt.replace.pattern, opt.replace.replacement);
         } else {
-          url.href = url.href.replace(options.replace.pattern, options.replace.replacement);
+          url.href = url.href.replace(opt.replace.pattern, opt.replace.replacement);
         }
       }
     
@@ -186,6 +187,7 @@ export class NormalizedUrl extends ParsedUrl {
     discardPort: '80',
     discardSearchParams: 'utm_*',
     discardTrailingSlash: false,
+    sortSearchParams: true,
   }
   
   static normalizer = NormalizedUrl.defaultNormalizer;
