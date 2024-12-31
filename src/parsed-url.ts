@@ -69,6 +69,33 @@ export class ParsedUrl extends URL {
     this.hostname = [value, this.domain].filter(v => v && v.trim().length > 0).join('.');
   }
 
+  /**
+   * A read-only key/value list of all UTM tracking parameters present in the
+   * URL's searchParams.
+   */
+  get utmParams() {
+    const output: Record<string, string> = {};
+    for (const key of this.searchParams.keys()) {
+      if (key.toLocaleLowerCase().startsWith('utm_')) {
+        output[key.slice(4)] = this.searchParams.get(key) ?? '';
+      }
+    }
+    return output;
+  }
+
+  /**
+   * The public portion of a hostname, sometimes referred to as its TLD or
+   * Top Level Domain. May include multiple segments; `.com`, `.co.uk`, and
+   * `pvt.k12.ma.us` are all Public Suffixes.
+   * 
+   * The distinction (`.com` vs. `s3.us-east-2.amazonaws.com`, for example) is
+   * particularly important for cookie security rules in a world full of SaaS
+   * hosted subdomains. In the above example, 'same-domain' security would
+   * include any S3 buckets hosted in the us-east-2 region, rather than a
+   * particular company's bucket.
+   * 
+   * @see https://publicsuffix.org
+   */
   get publicSuffix(): string {
     return tld.getPublicSuffix(this.hostname, { allowPrivateDomains: true }) ?? '';
   }
