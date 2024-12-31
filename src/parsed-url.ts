@@ -40,7 +40,7 @@ export class ParsedUrl extends URL {
    * The root of a URL's hostname, including its TLD; e.g. `example.com` for `www.example.com`.
    */
   get domain(): string {
-    return tld.getDomain(this.href) ?? '';
+    return tld.getDomain(this.href, { allowPrivateDomains: true }) ?? '';
   }
 
   set domain(value: string | undefined) {
@@ -51,7 +51,7 @@ export class ParsedUrl extends URL {
    * The root of a URL's hostname, excluding its TLD; e.g. `example` for `www.example.com`.
    */
   get domainWithoutSuffix(): string {
-    return tld.getDomainWithoutSuffix(this.href) ?? '';
+    return tld.getDomainWithoutSuffix(this.href, { allowPrivateDomains: true }) ?? '';
   }
 
   set domainWithoutSuffix(value: string) {
@@ -62,7 +62,7 @@ export class ParsedUrl extends URL {
    * The non-root portion of the URL's hostname; e.g. `www` for `www.example.com`.
    */
   get subdomain(): string {
-    return tld.getSubdomain(this.hostname) ?? '';
+    return tld.getSubdomain(this.hostname, { allowPrivateDomains: true }) ?? '';
   }
 
   set subdomain(value: string | undefined) {
@@ -70,7 +70,7 @@ export class ParsedUrl extends URL {
   }
 
   get publicSuffix(): string {
-    return tld.getPublicSuffix(this.hostname) ?? '';
+    return tld.getPublicSuffix(this.hostname, { allowPrivateDomains: true }) ?? '';
   }
 
   set publicSuffix(value: string) {
