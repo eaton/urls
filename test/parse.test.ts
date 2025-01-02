@@ -35,6 +35,7 @@ test('parsing helpers', t => {
 		extension: '.html',
 		search: '?param=1',
 		searchParams: { param: '1' },
+		utmParams: {},
 		hash: '#top',
 		fragment: 'top',
 		isIcann: true,

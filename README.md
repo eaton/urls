@@ -72,3 +72,21 @@ const custom = new NormalizedUrl(
 );
 console.log(normalized.href); // https://www.example.co.uk/index.html#content
 ```
+
+### Normalizer Options
+
+| option | description | default |
+|---|---|---|
+| base | A base hostname for relative URLs | _undefined_ |
+| forceProtocol | Force URLs to use a specific protocol | `https:` |
+| forceLowercase | Lowercase hostnames; specifying `pathname` will lowercase the _entire_ URL, but confuses case-sensitive servers | `true` |
+| discardAuth | Remove the URL's user and password segments | `true` |
+| discardHash | Remove the URL's trailing hash/fragment/anchor | `true` |
+| discardIndex | Remove explicit index files in favor or directory paths; glob strings can be used to control index filename matches | `**/{index,default}.*` |
+| discardPort | Remove the URL's port number; glob strings can be used to match one or more ports | `80` |
+| discardSearchParams | Remove URL search params; `true` strips all params, a glob string removes params whose keys are matched | `utm_*` |
+| discardTrailingSlash | Sometimes useful, but confuses many servers | `false` |
+| sortSearchParams | | `true` |
+| **Uncommon options** | | |
+| replace | Pass in an object with `pattern`, `replacement`, and `multi` keys to perform arbitrary string replacements on the URL | _undefined_ |
+| normalizer | A custom normalizer function; other options will be ignored | _undefined_ |
