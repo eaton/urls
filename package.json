@@ -1,6 +1,6 @@
 {
   "name": "@eatonfyi/urls",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Extended parsing and normalization of URLs, with support for TLD as a distinct property.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -44,7 +44,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eaton/urls.git"
+    "url": "https://github.com/eaton/fyi-urls.git"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

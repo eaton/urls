@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.2.1 - 2025-01-02
+
+- Repository URL change
+- Doc updates
+- Test fix
+
 ## 1.2.0 - 2024-12-30
 
 - Actually use the default normalizer options (inc. sorting searchParams by default)
